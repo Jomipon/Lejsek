@@ -1,5 +1,48 @@
 import streamlit as st
 
+
+def set_session_from_params(database):
+    code = st.query_params.get("code")
+    if code and "sb_tokens" not in st.session_state:
+        try:
+            sess = database.auth.exchange_code_for_session({"auth_code": code})
+            # ulož tokeny do session_state pro další render
+            st.session_state["sb_tokens"] = (
+                sess.session.access_token,
+                sess.session.refresh_token,
+            )
+        except Exception as e:
+            st.error(f"OAuth výměna selhala: {e}")
+        finally:
+            # smaž ?code=... z URL a rerun
+            st.query_params.clear()
+        st.rerun()
+def get_session_from_session_state(session, database, cookies):
+    if "sb_tokens" in st.session_state:
+        try:
+            at, rt = st.session_state["sb_tokens"]
+            cookies["acceess_token"] = at
+            cookies["refresh_token"] = rt
+            cookies.save()
+            database.auth.set_session(at, rt)
+        except Exception as e:
+            pass
+        session = database.auth.get_session()
+    return session
+def get_session_from_cookies(session, database, cookies):
+    if (not session or "sb_tokens" not in st.session_state) and "acceess_token" in cookies and "refresh_token" in cookies:
+        try:
+            at = cookies["acceess_token"]
+            rt = cookies["refresh_token"]
+            database.auth.set_session(at, rt)
+            st.session_state["sb_tokens"] = (at,rt,)
+        except Exception as e:
+            pass
+        session = database.auth.get_session()
+    return session
+
+
+
 def set_session_from_session_state(session, database):
     if "sb_tokens" in st.session_state:
         try:

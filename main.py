@@ -1,9 +1,11 @@
 import os
-from dotenv import load_dotenv
 import streamlit as st
+from streamlit_cookies_manager import EncryptedCookieManager
 from supabase import create_client
-from login import set_session_from_session_state, get_login_pageframe, show_login_notifications
+from dotenv import load_dotenv
 import pandas as pd
+import uuid
+from login import set_session_from_params, get_session_from_session_state, get_session_from_cookies
 
 load_dotenv()
 
@@ -13,157 +15,124 @@ APP_BASE_URL = os.getenv("APP_BASE_URL", "https://jomipon-beruska-prototyp.strea
 APP_NAME = os.getenv("APP_NAME")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
 
-def get_database_client():
+cookies = EncryptedCookieManager(prefix=APP_NAME, password=APP_PASSWORD)
+if not cookies.ready():
+    st.stop()
+
+def get_client():
     return create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-database = get_database_client()
+database = get_client()
+if "sb_database" not in st.session_state:
+    st.session_state["sb_database"] = database
+
+#database = st.session_state["sb_database"]
 
 st.set_page_config(page_title="Lejsec") # page_icon
-st.title("L.E.J.S.E.C.")
 
-if st.button("Znovu načíst stránku"):
-    st.rerun()
+session = None
 
-session = None 
+set_session_from_params(st.session_state["sb_database"])
+session = get_session_from_session_state(session, st.session_state["sb_database"], cookies)
+session = get_session_from_cookies(session, st.session_state["sb_database"], cookies)
 
-code = st.query_params.get("code")
-if code and "sb_tokens" not in st.session_state: #st.session_state.get("oauth_started")
-    try:
-        sess = database.auth.exchange_code_for_session({"auth_code": code})
-        st.session_state.sb_tokens = (sess.session.access_token, sess.session.refresh_token)
-        # úklid
-        st.query_params.pop("code", None)
-        session = sess
-        #st.session_state.oauth_started = False
-    except Exception as e:
-        # typicky právě „code challenge … does not match …“
-        st.error(f"OAuth výměna selhala: {e}")
-        st.query_params.pop("code", None)       # zahodíme starý code
-        #st.session_state.oauth_started = False  # reset stavu
-    finally:
-        st.rerun()
-
-
-session = set_session_from_session_state(session, database)
-get_login_pageframe(database, session)
-show_login_notifications()
-if session:
-    if st.button("Odhlásit"):
-        try:
-            database.auth.sign_out()
-            st.session_state["show_loged_out"] = True
-        finally:
-            st.session_state.pop("token", None)
-            st.session_state.pop("sb_tokens", None)
-        st.rerun()
-else:
-    st.warning("Nepřihlášený")
-
-st.write("-"*30)
-
-if session:
-    if st.button("Partneři"):
-        st.query_params["companies"] = ""
-        st.query_params.update(st.query_params) 
-        st.rerun()    
-    #rozcestník
-    params_dict = st.query_params.to_dict()
-    st.write(f"{params_dict=}")
-    #params_all = st.query_params.get_all()
-    #st.write(f"{params_all=}")
-    params_items = st.query_params.items()
-    for params_item in params_items:
-        st.write(f"{params_item=}")
-    params_keys = st.query_params.keys()
-    for params_key in params_keys:
-        st.write(f"{params_key=}")
-    st.write(f"fnu {'foods' in st.query_params}")
-    company_param = st.query_params.get("company_list")
-    #item_param = st.query_params.get("item")
-    if "settings" in st.query_params:
-        #nastavení
-        st.markdown("**settings**")
-    #central
-    elif "companies" in st.query_params:
-        #companies
-        st.markdown("**Seznam partnerů**")
-        #st.query_params.pop("companies", None)
-        companies = database.from_("company").select("*").order("created_at").execute()
-        if companies.data:
-            df = pd.DataFrame(companies.data)
-            #df = df.assign(_selected=False)
-            df = df.assign(url=df.company_id)
-            df["url"] = df["url"].apply(lambda x: f"{APP_BASE_URL}?company={x}")
-            # zobrazme jen potřebné sloupce (tvoje verze Streamlitu 1.33 nemá visible=False)
-            df = df[["company_id", "name", "name_first", "name_last", "active", "note", "created_at"]]
-            #company_id uuid
-            #owner_id text
-            #name text
-            #name_first text
-            #name_last text
-            #active boolean
-            #note text
-            #created_at timestamp
-            #"company_id", "owner_id", "name", "name_first", "name_last", "active", "note", "created_at"
-            df_view = st.data_editor(
-                data=df,
-                hide_index=True,
-                disabled=["company_id", "name", "name_first", "name_last", "active", "note", "created_at"],
-                column_config={
-                    #"_selected": st.column_config.CheckboxColumn("Vybrat", default=False),
-                    "url": st.column_config.LinkColumn("", display_text="Detail"),
-                },
-                column_order=["name", "active", "note"],
-                use_container_width=True,
-                key="companies_editor"
-            )
-        else:
-            st.write("Seznam je prázdný")
-        if st.button("Přidat"):
-            st.session_state["companies_new_show"] = True
-        if "companies_new_show" in st.session_state and st.session_state["companies_new_show"]:
-            with st.form("company_add_new", clear_on_submit=True):
-                company_new_name = st.text_input("Název partnera:")
-                if st.form_submit_button("Přidat partnera"):
+col1, col2 = st.columns(2)
+with col1:
+    with st.container(width=250):
+        st.write("# L.E.J.S.E.C.")
+        st.image("lejsek_sedy_kresba.png", use_container_width=True)
+with col2:
+    if not session or "sb_tokens" not in st.session_state:
+        tab_login, tab_register = st.tabs(["Přihlásit", "Registrace"])
+        with tab_login:
+            with st.form("login", clear_on_submit=True):
+                input_username = st.text_input("Email:")
+                input_password = st.text_input("Heslo:", type="password")
+                if st.form_submit_button("Přihlásit"):
                     try:
-                        database.from_("company").insert({"name":company_new_name.strip(), "active": True, "note": "", "name_first": "", "name_last": ""}).execute()
-                        st.session_state["companies_new_show_added_ok"] = True
-                        st.session_state.pop("companies_new_show", None)
+                        user = st.session_state["sb_database"].auth.sign_in_with_password({"email": input_username, "password": input_password})
                     except Exception as e:
-                        st.session_state["companies_new_show_added_wrong"] = True
-                        st.session_state["companies_new_show_added_wrong_error"] = e
+                        user = None
+                    if user:
+                        session = st.session_state["sb_database"].auth.get_session()
+                        at = session.access_token
+                        rt = session.refresh_token
+                        st.session_state["sb_tokens"] = (
+                            session.access_token,
+                            session.refresh_token,
+                        )
+                        cookies["acceess_token"] = at
+                        cookies["refresh_token"] = rt
+                        cookies.save()
+                        st.session_state["zobrazit_prihlaseno"] = True
+                    else:
+                        st.error("Jméno nebo heslo je neplatné")
                     st.rerun()
-                if st.form_submit_button("Skrýt"):
-                    st.session_state.pop("companies_new_show", None)
-                    st.rerun()
-        if st.session_state.get("companies_new_show_added_ok", False):
-            st.success("Partner byl přidán")
-            st.session_state.pop("companies_new_show_added_ok", False)
-        if st.session_state.get("companies_new_show_added_wrong", False):
-            st.error("Nepovedlo se přidat nového partnera")
-            st.error(st.session_state["companies_new_show_added_wrong_error"])
-            st.session_state.pop("companies_new_show_added_wrong", False)
-            st.session_state.pop("companies_new_show_added_wrong_error", False)
+                res = st.session_state["sb_database"].auth.sign_in_with_oauth({
+                    "provider": "google",
+                    "options": {"redirect_to": APP_BASE_URL}
+                })
+                auth_url = getattr(res, "url", None) or res.get("url")
+                # …a raději odkaz otevři VE STEJNÉM TABU (ne novém):
+                #st.markdown(f'<a href="{auth_url}" target="_self" class="st-emotion-cache-7ym5gk ea3mdgi1">Pokračovat na Google</a>', unsafe_allow_html=True)
+                #st.markdown(f"[Pokračovat na Google]({auth_url})", unsafe_allow_html=True)
+                #st.button("Přihlásit pomocí Google", on_click=)
+        with tab_register:
+            with st.form("register", clear_on_submit=True):
+                register_email = st.text_input("Email:")
+                regiter_password = st.text_input("Heslo:", type="password")
+                if st.form_submit_button("Vytvořit uživatele"):
+                    created_user = st.session_state["sb_database"].auth.sign_up({"email": register_email, "password": regiter_password})
+                    st.write(created_user)
+    if session:
+        st.write(f"Přihlášený uživatel: {session.user.email}")
+        if st.button("Odhlásit"):
+            try:
+                st.session_state["sb_database"].auth.sign_out()
+                st.session_state["show_loged_out"] = True
+            finally:
+                st.session_state.pop("token", None)
+                st.session_state.pop("sb_tokens", None)
+            try:
+                cookies["acceess_token"] = ""
+                cookies["refresh_token"] = ""
+                cookies.save()
+            except:
+                pass
+            st.rerun()
+    else:
+        st.warning("Nepřihlášený")
 
+@st.dialog("Nový partner")
+def partner_new_dialog(database):
+    st.write("Nový partner")
+    name = st.text_input("Název:")
+    note = st.text_input("Poznámka:")
+    if st.button("Přidat"):
+        try:
+            ins = database.from_("company").insert({"name": name.strip(), "name_first": name.strip(), "name_last": name.strip(), "active": True, "note": note.strip()}).execute()
+            st.success(f"Přidáno: {name}")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Nepovedlo se uložit do databáze: {e}")
 
-    elif "store" in st.query_params:
-        #sklad
-        st.markdown("**store**")
-    elif "chickens" in st.query_params:
-        #slepičky
-        st.markdown("**chickens**")
-    elif "import_data" in st.query_params:
-        #import
-        st.markdown("**import_data**")
-    elif "eport_data" in st.query_params:
-        #export
-        st.markdown("**eport_data**")
-    elif "reports" in st.query_params:
-        #tisky
-        st.markdown("**reports**")
-    elif "templates" in st.query_params:
-        #šablony
-        st.markdown("**templates**")
+if session:
+    page_board = st.Page("board.py", title="Board")
+    page_comapanies = st.Page("companies.py", title="Seznam partnerů")
+    pg = st.navigation([page_board,page_comapanies])
+    st.set_page_config(page_title="LEJSEK")
+    pg.run()
+
+    #nastavení
+    #st.markdown("**settings**")
+    #central
+    #companies
+    #sklad
+    #slepičky
+    #import
+    #export
+    #tisky
+    #šablony
     #tiskové sestavy
     #přehledy - diagramy
-    
+
