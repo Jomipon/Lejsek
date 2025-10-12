@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import uuid
+from login import get_session_from_session_state
 
 if "sb_database" not in st.session_state:
     st.error("Nepovedlo se připojit k adatabázi")    
@@ -9,9 +10,9 @@ if "sb_database" not in st.session_state:
 database = st.session_state["sb_database"]
 tokens = st.session_state["sb_tokens"]
 
-if tokens:
-    at, rt = tokens
-    database.auth.set_session(at, rt)
+session = None
+cookies = None
+session = get_session_from_session_state(session, st.session_state["sb_database"], cookies)
 
 st.markdown("**Seznam partnerů**")
 companies = database.from_("company").select("*").order("created_at").execute()
