@@ -1,5 +1,5 @@
 import streamlit as st
-
+import datetime
 
 def set_session_from_params(database):
     code = st.query_params.get("code")
@@ -18,15 +18,21 @@ def set_session_from_params(database):
             st.query_params.clear()
         st.rerun()
 def get_session_from_session_state(session, database, cookies):
+    st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 1")
     if session is None and "sb_tokens" in st.session_state:
         try:
+            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 2")
             at, rt = st.session_state["sb_tokens"]
             if cookies is not None:
                 cookies["acceess_token"] = at
                 cookies["refresh_token"] = rt
+                st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 3")
                 cookies.save()
+                st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 4")
             database.auth.set_session(at, rt)
+            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 5")
             session = database.auth.get_session()
+            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 6")
         except Exception as e:
             pass
         
