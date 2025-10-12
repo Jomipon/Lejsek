@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import uuid
 from login import set_session_from_params, get_session_from_session_state, get_session_from_cookies
+import datetime
 
 load_dotenv()
 
@@ -30,13 +31,13 @@ st.set_page_config(page_title="Lejsec") # page_icon
 
 session = None
 
-st.write(f"{session=}")
+st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} {session=}")
 set_session_from_params(st.session_state["sb_database"])
-st.write(f"{session=}")
+st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} {session=}")
 session = get_session_from_session_state(session, st.session_state["sb_database"], cookies)
-st.write(f"{session=}")
+st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} {session=}")
 session = get_session_from_cookies(session, st.session_state["sb_database"], cookies)
-st.write(f"{session=}")
+st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} {session=}")
 
 col1, col2 = st.columns(2)
 with col1:

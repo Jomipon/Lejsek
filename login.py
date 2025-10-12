@@ -21,9 +21,10 @@ def get_session_from_session_state(session, database, cookies):
     if session is None and "sb_tokens" in st.session_state:
         try:
             at, rt = st.session_state["sb_tokens"]
-            cookies["acceess_token"] = at
-            cookies["refresh_token"] = rt
-            cookies.save()
+            if cookies is not None:
+                cookies["acceess_token"] = at
+                cookies["refresh_token"] = rt
+                cookies.save()
             database.auth.set_session(at, rt)
         except Exception as e:
             pass
