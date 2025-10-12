@@ -18,7 +18,7 @@ def set_session_from_params(database):
             st.query_params.clear()
         st.rerun()
 def get_session_from_session_state(session, database, cookies):
-    if "sb_tokens" in st.session_state:
+    if session is None and "sb_tokens" in st.session_state:
         try:
             at, rt = st.session_state["sb_tokens"]
             cookies["acceess_token"] = at
@@ -30,7 +30,7 @@ def get_session_from_session_state(session, database, cookies):
         session = database.auth.get_session()
     return session
 def get_session_from_cookies(session, database, cookies):
-    if (not session or "sb_tokens" not in st.session_state) and "acceess_token" in cookies and "refresh_token" in cookies:
+    if session is None and (not session or "sb_tokens" not in st.session_state) and "acceess_token" in cookies and "refresh_token" in cookies:
         try:
             at = cookies["acceess_token"]
             rt = cookies["refresh_token"]
