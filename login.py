@@ -26,9 +26,10 @@ def get_session_from_session_state(session, database, cookies):
                 cookies["refresh_token"] = rt
                 cookies.save()
             database.auth.set_session(at, rt)
+            session = database.auth.get_session()
         except Exception as e:
             pass
-        session = database.auth.get_session()
+        
     return session
 def get_session_from_cookies(session, database, cookies):
     if session is None and (not session or "sb_tokens" not in st.session_state) and "acceess_token" in cookies and "refresh_token" in cookies:
