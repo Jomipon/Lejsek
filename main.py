@@ -26,15 +26,17 @@ database = get_client()
 if "sb_database" not in st.session_state:
     st.session_state["sb_database"] = database
 
-#database = st.session_state["sb_database"]
-
 st.set_page_config(page_title="Lejsec") # page_icon
 
 session = None
 
+st.write(f"{session=}")
 set_session_from_params(st.session_state["sb_database"])
+st.write(f"{session=}")
 session = get_session_from_session_state(session, st.session_state["sb_database"], cookies)
+st.write(f"{session=}")
 session = get_session_from_cookies(session, st.session_state["sb_database"], cookies)
+st.write(f"{session=}")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -117,6 +119,7 @@ def partner_new_dialog(database):
             st.error(f"Nepovedlo se uložit do databáze: {e}")
 
 if session:
+    st.write(f"{session=}")
     page_board = st.Page("board.py", title="Board")
     page_comapanies = st.Page("companies.py", title="Seznam partnerů")
     pg = st.navigation([page_board,page_comapanies])
