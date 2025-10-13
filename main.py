@@ -120,7 +120,7 @@ def partner_new_dialog(database):
             st.error(f"Nepovedlo se uložit do databáze: {e}")
 
 if session:
-    st.write(f"{session=}")
+    st.write(f"{session.user.email=}")
     page_board = st.Page("board.py", title="Board")
     page_comapanies = st.Page("companies.py", title="Seznam partnerů")
     pg = st.navigation([page_board,page_comapanies])
