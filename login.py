@@ -28,14 +28,15 @@ def get_session_from_session_state(session, database, cookies):
         try:
             st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 2")
             at, rt = st.session_state["sb_tokens"]
-            if cookies is not None:
+            if cookies is not None and (cookies["acceess_token"] != at or cookies["refresh_token"] != rt):
                 cookies["acceess_token"] = at
                 cookies["refresh_token"] = rt
                 st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 3")
                 cookies.save()
                 st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 4")
             st.write(f"{database.auth.email=}")
-            database.auth.set_session(at, rt)
+            if database.auth.email is None:
+                database.auth.set_session(at, rt)
             st.write(f"{database.auth.email=}")
             st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 5")
             #session = database.auth.get_session()

@@ -15,8 +15,8 @@ cookies = None
 session = get_session_from_session_state(session, st.session_state["sb_database"], cookies)
 
 st.markdown("**Seznam partnerů**")
-companies = database.from_("company").select("*").order("created_at").execute()
-if companies.data:
+#companies = database.from_("company").select("*").order("created_at").execute()
+if False: #companies.data:
     df = pd.DataFrame(companies.data)
     df = df.assign(url=df.company_id)
     #df["url"] = df["url"].apply(lambda x: f"{APP_BASE_URL}?company={x}")
