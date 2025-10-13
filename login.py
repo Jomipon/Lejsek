@@ -1,46 +1,32 @@
 import streamlit as st
-import datetime
 
 def set_session_from_params(database):
-    st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 1")
     code = st.query_params.get("code")
     if code and "sb_tokens" not in st.session_state:
         try:
-            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 2")
             sess = database.auth.exchange_code_for_session({"auth_code": code})
-            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 3")
             # ulož tokeny do session_state pro další render
             st.session_state["sb_tokens"] = (
                 sess.session.access_token,
                 sess.session.refresh_token,
             )
-            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 4")
         except Exception as e:
-            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 5 {e}")
             st.error(f"OAuth výměna selhala: {e}")
         finally:
             # smaž ?code=... z URL a rerun
             st.query_params.clear()
         st.rerun()
 def get_session_from_session_state(session, database, cookies):
-    st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 1")
     if session is None and "sb_tokens" in st.session_state:
         try:
-            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 2")
             at, rt = st.session_state["sb_tokens"]
             if cookies is not None and (cookies["acceess_token"] != at or cookies["refresh_token"] != rt):
                 cookies["acceess_token"] = at
                 cookies["refresh_token"] = rt
-                st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 3")
                 cookies.save()
-                st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 4")
-            st.write(f"{database.auth.email=}")
             if database.auth.email is None:
                 database.auth.set_session(at, rt)
-            st.write(f"{database.auth.email=}")
-            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 5")
             #session = database.auth.get_session()
-            #st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 6")
         except Exception as e:
             pass
         

@@ -31,13 +31,9 @@ st.set_page_config(page_title="Lejsec") # page_icon
 
 session = None
 
-st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1")
 set_session_from_params(st.session_state["sb_database"])
-st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2")
 session = get_session_from_session_state(session, st.session_state["sb_database"], cookies)
-st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 3")
 session = get_session_from_cookies(session, st.session_state["sb_database"], cookies)
-st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 4")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -86,7 +82,6 @@ with col2:
                 regiter_password = st.text_input("Heslo:", type="password")
                 if st.form_submit_button("Vytvořit uživatele"):
                     created_user = st.session_state["sb_database"].auth.sign_up({"email": register_email, "password": regiter_password})
-                    st.write(created_user)
     if session:
         st.write(f"Přihlášený uživatel: {session.user.email}")
         if st.button("Odhlásit"):
@@ -120,7 +115,6 @@ def partner_new_dialog(database):
             st.error(f"Nepovedlo se uložit do databáze: {e}")
 
 if session:
-    st.write(f"{session.user.email=}")
     page_board = st.Page("board.py", title="Board")
     page_comapanies = st.Page("companies.py", title="Seznam partnerů")
     pg = st.navigation([page_board,page_comapanies])
