@@ -34,12 +34,12 @@ def get_session_from_session_state(session, database, cookies):
                 st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 3")
                 cookies.save()
                 st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 4")
-            st.write(f"{database.auth=}")
+            st.write(f"{database.auth.email=}")
             database.auth.set_session(at, rt)
-            st.write(f"{database.auth=}")
+            st.write(f"{database.auth.email=}")
             st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 5")
-            session = database.auth.get_session()
-            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 6")
+            #session = database.auth.get_session()
+            #st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 2 - 6")
         except Exception as e:
             pass
         
