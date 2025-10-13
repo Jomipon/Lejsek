@@ -2,16 +2,21 @@ import streamlit as st
 import datetime
 
 def set_session_from_params(database):
+    st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 1")
     code = st.query_params.get("code")
     if code and "sb_tokens" not in st.session_state:
         try:
+            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 2")
             sess = database.auth.exchange_code_for_session({"auth_code": code})
+            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 3")
             # ulož tokeny do session_state pro další render
             st.session_state["sb_tokens"] = (
                 sess.session.access_token,
                 sess.session.refresh_token,
             )
+            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 4")
         except Exception as e:
+            st.write(f"{datetime.datetime.now().strftime("%H:%M:%S")} - 1 - 5 {e}")
             st.error(f"OAuth výměna selhala: {e}")
         finally:
             # smaž ?code=... z URL a rerun
