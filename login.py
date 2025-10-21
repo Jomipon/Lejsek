@@ -40,7 +40,10 @@ def get_session_from_cookies(session, database, cookies):
             st.session_state["sb_tokens"] = (at,rt,)
         except Exception as e:
             pass
-        session = database.auth.get_session()
+        try:
+            session = database.auth.get_session()
+        except:
+            session = None
     return session
 
 

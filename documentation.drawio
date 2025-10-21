@@ -1,0 +1,141 @@
+<mxfile host="65bd71144e">
+    <diagram id="rSfkSC3CQmfXDJO807Gx" name="Page-1">
+        <mxGraphModel dx="1326" dy="484" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Company" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="140" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;div&gt;Company_ID&lt;/div&gt;User_ID&lt;div&gt;Name_First&lt;/div&gt;&lt;div&gt;Name_Second&lt;/div&gt;&lt;div&gt;Name&lt;/div&gt;&lt;div&gt;Note&lt;/div&gt;&lt;div&gt;Created&lt;/div&gt;&lt;div&gt;Active&lt;/div&gt;&lt;div&gt;Physical_person&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="170" width="90" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Account" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="140" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Google_ID&lt;div&gt;User_ID&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="170" width="90" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Rights" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="140" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Google_ID&lt;div&gt;Gmail&lt;/div&gt;&lt;div&gt;Acceess&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="170" width="90" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Slepice" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="140" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Sledice_ID&lt;div&gt;Narozeni&lt;/div&gt;&lt;div&gt;Umrti&lt;/div&gt;&lt;div&gt;Name&lt;/div&gt;&lt;div&gt;Give_Name&lt;/div&gt;&lt;div&gt;Give_Date&lt;/div&gt;&lt;div&gt;Rod&lt;/div&gt;&lt;div&gt;Třída&lt;/div&gt;&lt;div&gt;Egg_color&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="170" width="120" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Desktop" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="530" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Přehledy&lt;div&gt;Diagramy&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="400" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Export dat" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="430" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Nastavení" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="530" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Import dat" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="620" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Šablony" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="690" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Seznamy" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="650" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Detaily" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="760" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Tiskové sestavy" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="10" y="580" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="Příhlásit&lt;div&gt;Odhlásit&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="440" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="" style="endArrow=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="11" target="12" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="410" y="570" as="sourcePoint"/>
+                        <mxPoint x="460" y="520" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="" style="endArrow=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="11" target="13" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="410" y="570" as="sourcePoint"/>
+                        <mxPoint x="460" y="520" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="11" target="14" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="410" y="570" as="sourcePoint"/>
+                        <mxPoint x="460" y="520" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="" style="endArrow=none;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="11" target="15" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="380" y="630" as="sourcePoint"/>
+                        <mxPoint x="430" y="580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="" style="endArrow=none;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="11" target="16" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="380" y="630" as="sourcePoint"/>
+                        <mxPoint x="430" y="580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="26" value="" style="endArrow=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="11" target="17" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="380" y="630" as="sourcePoint"/>
+                        <mxPoint x="230" y="640" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="" style="endArrow=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="18" target="17" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="380" y="630" as="sourcePoint"/>
+                        <mxPoint x="430" y="580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="" style="endArrow=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="19" target="11" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="380" y="630" as="sourcePoint"/>
+                        <mxPoint x="430" y="580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="" style="endArrow=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="11" target="20" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="380" y="630" as="sourcePoint"/>
+                        <mxPoint x="430" y="580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="33" value="Account" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="30" y="880" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="account_id&lt;div&gt;auth_id&lt;/div&gt;&lt;div&gt;owner_id&lt;/div&gt;&lt;div&gt;email&lt;/div&gt;&lt;div&gt;is_active&lt;/div&gt;&lt;div&gt;created_at&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="30" y="910" width="120" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="Company" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="900" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Company_ID&lt;div&gt;Owner_ID&lt;/div&gt;&lt;div&gt;Name&lt;/div&gt;&lt;div&gt;Name_First&lt;/div&gt;&lt;div&gt;Name_Second&lt;/div&gt;&lt;div&gt;Is_Company&lt;/div&gt;&lt;div&gt;Is_Active&lt;/div&gt;&lt;div&gt;Note&lt;/div&gt;&lt;div&gt;Created_at&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="930" width="120" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="" style="endArrow=classic;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="34" target="37">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="370" y="1040" as="sourcePoint"/>
+                        <mxPoint x="420" y="990" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" value="Owner_ID = Owner_ID" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="40">
+                    <mxGeometry x="0.1727" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

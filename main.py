@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import pandas as pd
 import uuid
 from login import set_session_from_params, get_session_from_session_state, get_session_from_cookies
-import datetime
 
 load_dotenv()
 
@@ -15,6 +14,13 @@ SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 APP_BASE_URL = os.getenv("APP_BASE_URL", "https://jomipon-beruska-prototyp.streamlit.app")
 APP_NAME = os.getenv("APP_NAME")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
+
+page_board     = st.Page("pages/board.py",     title="Board",            url_path="board")
+page_companies = st.Page("pages/companies.py", title="Seznam partnerů",  url_path="companies")
+page_company   = st.Page("pages/_company.py",   title="Detail partnera",  url_path="company")
+page_test      = st.Page("pages/page_test.py", title="Test",             url_path="test")
+pg = st.navigation([page_board, page_companies, page_company, page_test])
+
 
 cookies = EncryptedCookieManager(prefix=APP_NAME, password=APP_PASSWORD)
 if not cookies.ready():
@@ -27,7 +33,9 @@ database = get_client()
 if "sb_database" not in st.session_state:
     st.session_state["sb_database"] = database
 
-st.set_page_config(page_title="Lejsec") # page_icon
+st.session_state["app_base_url"] = APP_BASE_URL
+
+st.set_page_config(page_title="LEJSEK")
 
 session = None
 
@@ -38,8 +46,9 @@ session = get_session_from_cookies(session, st.session_state["sb_database"], coo
 col1, col2 = st.columns(2)
 with col1:
     with st.container(width=250):
-        st.write("# L.E.J.S.E.C.")
-        st.image("lejsek_sedy_kresba.png", use_container_width=True)
+        st.markdown("# L.E.J.S.E.K.")
+        if not session:
+            st.image("lejsek_sedy_kresba.png", use_container_width=True)
 with col2:
     if not session or "sb_tokens" not in st.session_state:
         tab_login, tab_register = st.tabs(["Přihlásit", "Registrace"])
@@ -72,10 +81,6 @@ with col2:
                     "options": {"redirect_to": APP_BASE_URL}
                 })
                 auth_url = getattr(res, "url", None) or res.get("url")
-                # …a raději odkaz otevři VE STEJNÉM TABU (ne novém):
-                #st.markdown(f'<a href="{auth_url}" target="_self" class="st-emotion-cache-7ym5gk ea3mdgi1">Pokračovat na Google</a>', unsafe_allow_html=True)
-                #st.markdown(f"[Pokračovat na Google]({auth_url})", unsafe_allow_html=True)
-                #st.button("Přihlásit pomocí Google", on_click=)
         with tab_register:
             with st.form("register", clear_on_submit=True):
                 register_email = st.text_input("Email:")
@@ -101,36 +106,4 @@ with col2:
     else:
         st.warning("Nepřihlášený")
 
-@st.dialog("Nový partner")
-def partner_new_dialog(database):
-    st.write("Nový partner")
-    name = st.text_input("Název:")
-    note = st.text_input("Poznámka:")
-    if st.button("Přidat"):
-        try:
-            ins = database.from_("company").insert({"name": name.strip(), "name_first": name.strip(), "name_last": name.strip(), "active": True, "note": note.strip()}).execute()
-            st.success(f"Přidáno: {name}")
-            st.rerun()
-        except Exception as e:
-            st.error(f"Nepovedlo se uložit do databáze: {e}")
-
-if session:
-    page_board = st.Page("board.py", title="Board")
-    page_comapanies = st.Page("companies.py", title="Seznam partnerů")
-    pg = st.navigation([page_board,page_comapanies])
-    st.set_page_config(page_title="LEJSEK")
-    pg.run()
-
-    #nastavení
-    #st.markdown("**settings**")
-    #central
-    #companies
-    #sklad
-    #slepičky
-    #import
-    #export
-    #tisky
-    #šablony
-    #tiskové sestavy
-    #přehledy - diagramy
-
+pg.run()
