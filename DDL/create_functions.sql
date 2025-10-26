@@ -1,21 +1,3 @@
-CREATE OR REPLACE FUNCTION create_owner_id()
-RETURNS TEXT
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  v_owner_id TEXT;
-BEGIN
-  -- Pokus o založení záznamu; při duplicitě na auth_id vrátí existující řádek
-  INSERT INTO accounts (auth_id, email, owner_id)
-  VALUES ((auth.uid ())::text, auth.jwt() ->> 'email', gen_random_uuid()::text)
-  ON CONFLICT (auth_id) DO UPDATE
-    SET auth_id = EXCLUDED.auth_id  -- no-op, jen aby šlo použít RETURNING
-  RETURNING owner_id INTO v_owner_id;
-
-  RETURN v_owner_id;
-END;
-$$;
-
 CREATE OR REPLACE FUNCTION get_owner_id()
 RETURNS TEXT
 LANGUAGE plpgsql
@@ -33,7 +15,9 @@ RETURNS TEXT
 LANGUAGE plpgsql
 AS $$
 DECLARE
-  v_owner_id TEXT;
+  v_owner_id text; 
+  v_auth_id text := auth.uid()::text; 
+  v_email text := auth.jwt() ->> 'email';
 BEGIN
   -- Pokus o založení záznamu; při duplicitě na auth_id vrátí existující řádek
   INSERT INTO accounts (auth_id, email, owner_id)
@@ -41,7 +25,9 @@ BEGIN
   ON CONFLICT (auth_id) DO UPDATE
     SET auth_id = EXCLUDED.auth_id  -- no-op, jen aby šlo použít RETURNING
   RETURNING owner_id INTO v_owner_id;
-
+  
+  INSERT INTO settings (settings_id, owner_id) VALUES (v_auth_id, v_owner_id) ON CONFLICT (settings_id) DO NOTHING;
+  
   RETURN v_owner_id;
 END;
 $$;

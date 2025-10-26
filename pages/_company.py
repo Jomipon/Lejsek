@@ -4,14 +4,25 @@ from copy import deepcopy
 
 if "sb_database" not in st.session_state:
     st.error("Nepovedlo se připojit k adatabázi")
-    st.stop()
+    #st.stop()
+    st.switch_page("pages/board.py")
 
-database = st.session_state["sb_database"]
-tokens = st.session_state["sb_tokens"]
+database = st.session_state.get("sb_database", None)
+tokens = st.session_state.get("sb_tokens", None)
 
 session = None
 cookies = None
 session = get_session_from_session_state(session, st.session_state["sb_database"], cookies)
+
+person_types = {
+    0: "Fyzická osoba",
+    1: "Právnická osoba"
+}
+relationship_types = {
+    0: "Odběratel",
+    1: "Dodavatel",
+    2: "Dodavatel + Odběratel"
+}
 
 def get_changes(old, new, path=()):
     changes = {}
@@ -34,13 +45,13 @@ is_new = st.query_params.get("new", "0")
 is_new = 1 if is_new.isdigit() and int(is_new) == 1 else 0
 if not id_company:
     st.query_params.clear() 
-    st.switch_page("companies")
+    st.switch_page("pages/companies.py")
 else:
     try:
         company = database.from_("company").select("*").filter("company_id", "eq", str(id_company)).execute()
     except:
         st.query_params.clear() 
-        st.switch_page("board")
+        st.switch_page("pages/board.py")
     if company.data:
         #edit
         company = company.data[0]
@@ -50,10 +61,27 @@ else:
     else:
         #new
         if is_new:
-            company = { "company_id":id_company, "owner_id": None, "name": "", "name_first": "", "name_last": "", "active": True, "note": "", "created_at":None }
+            company = { 
+                "company_id":id_company, 
+                "owner_id": None, 
+                "name": "", 
+                "name_first": "", 
+                "name_last": "", 
+                "active": True, 
+                "note": "", 
+                "created_at":None, 
+                "type_person": 0,
+                "address": "",
+                "type_relationship": 0,
+                "email": "",
+                "phone_number": "",
+                "alias": "",
+                "foundation_id": "",
+                "ico": ""   
+                }
         else:
             st.query_params.clear() 
-            st.switch_page("companies")
+            st.switch_page("pages/companies.py")
 
 @st.dialog("Smazat partnera")
 def partner_smazat(db, company_id, company_name):
@@ -82,10 +110,31 @@ else:
 if company:
     st.session_state[f"company_orig_{id_company}"] = company
     company_edited = deepcopy(st.session_state[f"company_orig_{id_company}"])
-    company_edited["name"] = st.text_input("Název:", company_edited["name"])
+    with st.container(border=True):
+        company_edited["type_person"] = st.radio("Typ osoby:", 
+                                                 options=list(person_types.keys()), 
+                                                 index=list(person_types.keys()).index(company_edited["type_person"]), 
+                                                 horizontal=True,  
+                                                 format_func=lambda k: person_types[k], 
+                                                 key=f"type_{id_company}")
+        if company_edited["type_person"] == 0:
+            company_edited["name_first"] = st.text_input("Jméno:", company_edited["name_first"])
+            company_edited["name_last"] = st.text_input("Příjmení:", company_edited["name_last"])
+        else:
+            company_edited["name"] = st.text_input("Název:", company_edited["name"])
+            company_edited["ico"] = st.text_input("IČO:", company_edited["ico"])
     company_edited["active"] = st.checkbox("Aktivní:", company_edited["active"])
     company_edited["note"] = st.text_input("Poznámka:", company_edited["note"])
-
+    company_edited["address"] = st.text_input("Adresa:", company_edited["address"])
+    company_edited["email"] = st.text_input("Email:", company_edited["email"])
+    company_edited["phone_number"] = st.text_input("Telefon:", company_edited["phone_number"])
+    company_edited["alias"] = st.text_input("Alias:", company_edited["alias"])
+    company_edited["type_relationship"] = st.radio("Vztah:", 
+                                                options=list(relationship_types.keys()), 
+                                                index=list(relationship_types.keys()).index(company_edited["type_relationship"]), 
+                                                horizontal=True,  
+                                                format_func=lambda k: relationship_types[k], 
+                                                key=f"relationship_{id_company}")
     if is_new:
         if st.button("Vytvořit"):
             insert_data = {

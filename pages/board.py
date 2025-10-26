@@ -1,3 +1,9 @@
 import streamlit as st
 
-st.write("Main Board")
+
+
+
+st.write("ON Board")
+st.write("Jaké bude počasí?")
+
+
