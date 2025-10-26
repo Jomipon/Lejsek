@@ -7,6 +7,7 @@ import pandas as pd
 import uuid
 from login import set_session_from_params, get_session_from_session_state, get_session_from_cookies, get_login_frame, get_loged_frame
 
+
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")

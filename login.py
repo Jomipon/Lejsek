@@ -95,6 +95,7 @@ def login_frame(cookies, app_url_base):
     })
     auth_url = getattr(res, "url", None) or res.get("url")
 
+
 def get_login_frame(cookies, app_url_base):
     tab_login, tab_register = st.tabs(["Přihlásit", "Registrace"])
     with tab_login:
