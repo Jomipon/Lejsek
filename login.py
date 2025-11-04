@@ -1,5 +1,4 @@
 import streamlit as st
-
 def set_session_from_params(database):
     code = st.query_params.get("code")
     if code and "sb_tokens" not in st.session_state:
@@ -16,39 +15,48 @@ def set_session_from_params(database):
             # smaž ?code=... z URL a rerun
             st.query_params.clear()
         st.rerun()
+    param_access_token = st.query_params.get("access_token")
+    param_refresh_token = st.query_params.get("refresh_token")
+    param_type = st.query_params.get("type")
+    if param_type == "signup" and param_access_token and param_refresh_token:
+        st.session_state["sb_tokens"] = param_access_token, param_refresh_token
+        st.query_params.pop("access_token")
+        st.query_params.pop("expires_at")
+        st.query_params.pop("expires_in")
+        st.query_params.pop("refresh_token")
+        st.query_params.pop("token_type")
+        st.query_params.pop("type")
 def get_session_from_session_state(session, database, cookies):
-    if session is None and "sb_tokens" in st.session_state:
+    if "sb_tokens" in st.session_state: # session is None and 
         try:
             at, rt = st.session_state["sb_tokens"]
             if cookies is not None and (cookies["acceess_token"] != at or cookies["refresh_token"] != rt):
                 cookies["acceess_token"] = at
                 cookies["refresh_token"] = rt
                 cookies.save()
-            if database.auth.email is None:
-                database.auth.set_session(at, rt)
+            #if database.auth.email is None:
+            database.auth.set_session(at, rt)
             #session = database.auth.get_session()
         except Exception as e:
             pass
-        
     return session
 def get_session_from_cookies(session, database, cookies):
     if session is None:
-        if (not session or "sb_tokens" not in st.session_state):
-            if cookies is not None and cookies.ready():
-                if "acceess_token" in cookies:
-                    if "refresh_token" in cookies:
-                        try:
-                            at = cookies["acceess_token"]
-                            rt = cookies["refresh_token"]
-                            database.auth.set_session(at, rt)
-                            st.session_state["sb_tokens"] = (at,rt,)
-                        except Exception as e:
-                            pass
-                        try:
-                            session = database.auth.get_session()
-                        except:
-                            session = None
+        session = {}
+    at_session = session.get("acceess_token","")
+    rt_session = session.get("refresh_token","")
+    at_cookies = cookies.get("acceess_token","")
+    rt_cookies = cookies.get("refresh_token","")
+    if at_session != at_cookies or rt_session != rt_cookies:
+        session["acceess_token"] = at_cookies
+        session["refresh_token"] = rt_cookies
+    try:
+        database.auth.set_session(session["acceess_token"], session["refresh_token"])
+    except:
+        pass
+    session = database.auth.get_session()
     return session
+
 def user_create(email, password):
     created_user = st.session_state["sb_database"].auth.sign_up({"email": email, "password": password})
     return created_user
@@ -59,12 +67,22 @@ def register_frame():
     register_email = st.text_input("Email:")
     regiter_password = st.text_input("Heslo:", type="password")
     if st.form_submit_button("Vytvořit uživatele"):
-        try:
-            created_user = user_create(register_email, regiter_password)
-            st.write(created_user)
-        except Exception as e:
-            st.error("Nepovedlo se vytvořit uživatele")
-            #st.error(e)
+        if len(register_email) < 5:
+            st.error("Nejdříve je potřeba zadat email")
+        elif "@" not in register_email:
+            st.error("Email nemá správný formát")
+        else:
+            if len(regiter_password) >= 8:
+                try:
+                    created_user = user_create(register_email, regiter_password)
+                    st.success("Uživatel byl zaregistrován.\nZkontrolujte si zadanou emailovou schránku.")
+                    st.write(f"{created_user=}")
+                    st.toast("Uživatel by zaregistrován")
+                    st.session_state["user_info_registrered"] = True
+                except:
+                    st.error("Nepovedlo se zaregistrovat uživatele")
+            else:
+                st.error("Heslo musí být minimálně 8 znaků dlouhé")
         
 def login_frame(cookies, app_url_base):
     input_username = st.text_input("Email:")
@@ -85,7 +103,7 @@ def login_frame(cookies, app_url_base):
             cookies["acceess_token"] = at
             cookies["refresh_token"] = rt
             cookies.save()
-            st.session_state["zobrazit_prihlaseno"] = True
+            st.session_state["show_loged_in"] = True
         else:
             st.error("Jméno nebo heslo je neplatné")
         st.rerun()
@@ -94,7 +112,6 @@ def login_frame(cookies, app_url_base):
         "options": {"redirect_to": app_url_base}
     })
     auth_url = getattr(res, "url", None) or res.get("url")
-
 
 def get_login_frame(cookies, app_url_base):
     tab_login, tab_register = st.tabs(["Přihlásit", "Registrace"])
@@ -122,6 +139,7 @@ def get_loged_frame(session, cookies):
             pass
         st.rerun()
 
+
 def login_pageframe_by_gmail(database, app_base_url):
     st.markdown("**Google**")
     res = database.auth.sign_in_with_oauth({
@@ -135,3 +153,4 @@ def login_pageframe_by_gmail(database, app_base_url):
     if st.form_submit_button("Skrýt"):
         st.session_state["show_login"] = False
         st.rerun()
+
